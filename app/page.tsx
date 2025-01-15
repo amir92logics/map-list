@@ -16,8 +16,8 @@ export default function Home() {
 
   const [cityName, setCityName] = useState<any>(null);
   const [mapList, setMapList] = useState<any>([]);
-  const [currentLocation] = useState<any>({ lat: 37.0902, lng: -95.7129 });
-  const handlesearch = () => {
+  const [location] = useState<any>({ lat: 37.0902, lng: -95.7129 });
+  const getLocation = () => {
     const _tempData = Data.filter((item: any) => item.city == cityName);
     setMapList(_tempData);
 
@@ -79,7 +79,7 @@ export default function Home() {
               <Button
                 variant="contained"
                 sx={{ px: 4, py: 1, position: 'absolute', right: 7, top: 6 }}
-                onClick={handlesearch}
+                onClick={getLocation}
               >
                 Search
               </Button>
@@ -462,12 +462,12 @@ export default function Home() {
                          zoom: 15
                       }}
                       onLoad={onLoad}
-                      center={currentLocation}
+                      center={location}
                     >
                       {mapList?.length > 0 && (
                         <>
                           <Circle
-                            center={currentLocation}
+                            center={location}
                             radius={5 * 1609.34}
                             options={{
                               fillColor: '#3F78FF',
@@ -478,35 +478,21 @@ export default function Home() {
                               editable: false,
                               zIndex: 1
                             }}
-                            onCenterChanged={() => console.log('onCenterChanged')}
-                            onRadiusChanged={() => console.log('onRadiusChanged')}
                           />
                           {mapList?.map((marker: any, index: any) => (
                             <Marker
                               key={index}
-                              // onMouseOver={() => {
-                              //   setactiveMarker(marker.id);
-                              //   setIsInfoWindowVisible(true);
-                              // }}
-                              // onMouseOut={() => {
-                              //   setactiveMarker(null);
-                              //   setIsInfoWindowVisible(false);
-                              // }}
                               position={{ lat: parseFloat(marker.lat), lng: parseFloat(marker.lng) }}
                               draggable={false}
                               options={{
-                                optimized: false, // This prevents the image from being optimized, preserving the rounded shape
+                                optimized: false,
                                 shape: {
-                                  coords: [12.5, 12.5, 12.5], // Make it circular
+                                  coords: [12.5, 12.5, 12.5],
                                   type: 'circle'
                                 }
                               }}
                             >
-                              {/* {isInfoWindowVisible && activeMarker === marker?.id ? ( */}
                                 <InfoWindow
-                                  // onDomReady={() => setInfoDomReady(true)}
-                                  // onUnmount={() => setInfoDomReady(false)}
-                                  // onCloseClick={handleInfoCloseClick}
                                 >
                                   <Stack>
                                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 1 }}>
@@ -514,7 +500,6 @@ export default function Home() {
                                     </Box>
                                   </Stack>
                                 </InfoWindow>
-                              {/* ) : null} */}
                             </Marker>
                           ))}
 
