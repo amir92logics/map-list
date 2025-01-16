@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useState } from "react";
-import { Button, Stack, TextField, Typography, Grid, Box } from '@mui/material';
-import { Data } from './Data';
+import { Button, Stack, TextField, Typography, Grid, Box, CardContent } from '@mui/material';
+import Data  from './Data.json';
 import {
   GoogleMap,
   LoadScript,
@@ -13,32 +13,36 @@ import {
 } from '@react-google-maps/api';
 
 export default function Home() {
-
+  const [infoDomReady, setInfoDomReady] = useState(false);
+  const [anchorMap, setAnchorMap] = useState<any>()
   const [cityName, setCityName] = useState<any>(null);
   const [mapList, setMapList] = useState<any>([]);
-  const [location] = useState<any>({ lat: 37.0902, lng: -95.7129 });
+  const [clocation, setLocation] = useState<any>(null);
+  const [activeMarker, setactiveMarker] = useState<any>(null);
+  const [isInfoWindowVisible, setIsInfoWindowVisible] = useState(false);  
+  const [selectedCenter, setSelectedCenter] = useState<any>(null);
+
   const getLocation = () => {
     const _tempData = Data.filter((item: any) => item.city == cityName);
     setMapList(_tempData);
-
+    setLocation(_tempData[0].center)
   }
-
-  const onLoad = useCallback(function callback(map: any) {
-    // const bounds = new window.google.maps.LatLngBounds();
-    // map.fitBounds(bounds);
-    // map.setZoom(3);
-    // a = 12;
-    const usBounds = new window.google.maps.LatLngBounds(
-      new window.google.maps.LatLng(24.396308, -125.0), // Southwest corner
-      new window.google.maps.LatLng(49.384358, -66.93457) // Northeast corner
-    );
-
-    map.fitBounds(usBounds); // Fit the map to the defined bounds
-    map.setZoom(12); // Set an initial zoom level
-  }, []);
+  const handleInfoCloseClick = () => {
+    setInfoDomReady(!infoDomReady);
+    console.log(infoDomReady);
+  };
+  const handleCloseAnchorMap = () => {
+    setAnchorMap(null);
+  };
+  const handleMarkerClick = (id: any, ismarker: any) => {
+   
+          // setDayCareslistbyId(response.data.data);
+       
+  };
   return (
     <Grid
       container
+      spacing={2}
       sx={{
         pt: { md: 10, xs: 10 }
       }}
@@ -50,6 +54,7 @@ export default function Home() {
           </Typography>
           <Grid
             container
+            spacing={2}
             sx={{
               position: 'relative',
             }}
@@ -78,12 +83,36 @@ export default function Home() {
 
               <Button
                 variant="contained"
-                sx={{ px: 4, py: 1, position: 'absolute', right: 7, top: 6 }}
+                sx={{ px: 4, py: 1, position: 'absolute', right: 7, top: 22 }}
                 onClick={getLocation}
               >
                 Search
               </Button>
-            </Grid>{mapList.length}
+            </Grid>
+            <Grid
+              item
+              xs={12}
+            >
+              <Stack  sx={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
+                                        >
+               { mapList.length > 0 && mapList?.map((marker: any, index: any) => (
+                                          <Box sx={{ p: 1, borderRadius: '10px', maxWidth: '500px', border: '1px solid #000',}}>
+                                            <Typography sx={{fontSize: '16px', fontWeight: 'bold' }}>
+                                              {marker.name}
+                                            </Typography>
+                                            <Typography sx={{fontSize: '14px' }}>
+                                              {marker.email}
+                                            </Typography>
+                                            <Typography sx={{fontSize: '14px' }}>
+                                              {marker.phone}
+                                            </Typography>
+                                            <Typography sx={{fontSize: '14px' }}>
+                                              {marker.address}
+                                            </Typography>
+                                          </Box>
+                                        ))}
+                                        </Stack>
+            </Grid>
           </Grid>
 
         </Stack>
@@ -459,16 +488,16 @@ export default function Home() {
                           }
                         ],
                         zoomControl: true, 
-                         zoom: 15
+                         zoom: 12
                       }}
-                      onLoad={onLoad}
-                      center={location}
+                      // onLoad={onLoad}
+                      center={clocation}
                     >
                       {mapList?.length > 0 && (
                         <>
                           <Circle
-                            center={location}
-                            radius={5 * 1609.34}
+                            center={clocation}
+                            // radius={5 * 1609.34}
                             options={{
                               fillColor: '#3F78FF',
                               fillOpacity: 0.3,
@@ -481,26 +510,78 @@ export default function Home() {
                           />
                           {mapList?.map((marker: any, index: any) => (
                             <Marker
-                              key={index}
-                              position={{ lat: parseFloat(marker.lat), lng: parseFloat(marker.lng) }}
-                              draggable={false}
-                              options={{
-                                optimized: false,
-                                shape: {
-                                  coords: [12.5, 12.5, 12.5],
-                                  type: 'circle'
-                                }
-                              }}
-                            >
-                                <InfoWindow
-                                >
-                                  <Stack>
-                                   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 1 }}>
-                                      <Typography sx={{ fontWeight: 'bold' }}>{marker?.name}</Typography>
+                            key={index}
+                            // icon={selectedCenter == index ? MapMarker2 : marker?.marker == 'red' ? MapMarker1 : MapMarker}
+                            ref={anchorMap}
+                            onMouseOver={() => {
+                              setTimeout(() => {}, 1000);
+                            }}
+                            onClick={() => {
+                              setSelectedCenter(index);
+                              setactiveMarker(marker.id);
+                              setIsInfoWindowVisible(true);
+                            }}
+                            position={{ lat: parseFloat(marker.lat), lng: parseFloat(marker.lng) }}
+                            draggable={false}
+                            options={{
+                              optimized: false, // This prevents the image from being optimized, preserving the rounded shape
+                              shape: {
+                                coords: [12.5, 12.5, 12.5], // Make it circular
+                                type: 'circle'
+                              }
+                            }}
+                          >
+                            {/* Desktop marker tooltip */}
+                            {isInfoWindowVisible && activeMarker === marker?.id ? (
+                              <InfoWindow
+                                anchor={anchorMap}
+                                position={{ lat: parseFloat(marker.lat), lng: parseFloat(marker.lng) }}
+                                // onDomReady={() => setInfoDomReady(true)}
+                                // onUnmount={() => setInfoDomReady(false)}
+                                onCloseClick={handleInfoCloseClick}
+                              >
+                                <>
+                                  <Box display={'flex'} sx={{ maxWidth: '320px' }}>
+                                    <Box
+                                      className="listdaycare"
+                                      onClick={() => {
+                                        // setCity(marker?.city);
+                                        handleMarkerClick(marker?.id, false);
+                                      }}
+                                      key={marker.id}
+                                      sx={{ cursor: 'pointer' }}
+                                    >
+                                      <CardContent
+                                        // sx={{ padding: '16px 0px' }}
+                                        onClick={() => {
+                                          // setCity(marker?.city);
+                                          handleMarkerClick(marker?.id, false);
+                                        }}
+                                      >
+                                        <Box
+                                        >
+                                          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                            <Typography sx={{fontSize: '16px', fontWeight: 'bold' }}>
+                                              {marker.name}
+                                            </Typography>
+                                            <Typography sx={{fontSize: '14px' }}>
+                                              {marker.email}
+                                            </Typography>
+                                            <Typography sx={{fontSize: '14px' }}>
+                                              {marker.phone}
+                                            </Typography>
+                                            <Typography sx={{fontSize: '14px' }}>
+                                              {marker.address}
+                                            </Typography>
+                                          </Box>
+                                        </Box>
+                                      </CardContent>
                                     </Box>
-                                  </Stack>
-                                </InfoWindow>
-                            </Marker>
+                                  </Box>
+                                </>
+                              </InfoWindow>
+                            ) : null}
+                          </Marker>
                           ))}
 
                         </>

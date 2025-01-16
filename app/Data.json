@@ -1,0 +1,76 @@
+ [ 
+    {
+        "id": 1,
+        "name": "Hafeez Centre",
+        "address": "Hafeez Centre, Lahore, Pakistan",
+        "city": "lahore",
+        "email": "shop1@gmail.com",
+        "phone": "+923238484098",
+        "center": {
+            "lng": 31.5634667,
+            "lat": 74.3821621
+          },
+          "lng": 31.516066,
+          "lat": 74.342988
+    },
+    {
+        "id": 2,
+        "name": "shop 2",
+        "address": "11601 Washington Place",
+        "city": "sialkot",
+        "lat": "34.004711",
+        "lng": "-118.420518"
+    },
+    {
+        "id": 3,
+        "name": "shop 3",
+        "address": "11601 Washington Place",
+        "city": "sialkot",
+        "lat": "34.004711",
+        "lng": "-118.420518"
+    },
+    {
+        "id": 4,
+        "name": "Oslo Raw Adamstuen",
+        "address": "Oslo Raw Adamstuen, Ullevålsveien 82, Oslo, Norge",
+        "city": "Oslo",
+        "email": "shop4@gmail.com",
+        "phone": "+923238484098",
+        "center": {
+            "lng": 10.7344495,
+            "lat": 59.93295449999999
+          },
+        "lng": 10.7344495,
+          "lat": 59.9443543534
+        },
+        {
+            "id": 5,
+            "name": "Oslo Raw Adamstuen",
+            "address": "Oslo Raw Adamstuen, Ullevålsveien 82, Oslo, Norge",
+            "city": "Oslo",
+            "email": "shop4@gmail.com",
+            "phone": "+923238484098",
+            "center": {
+                "lng": 10.7344495,
+                "lat": 59.93295449999999
+              },
+            "lng": 10.898989,
+              "lat": 59.9565634534
+            },
+            {
+                "id": 6,
+                "name": "Oslo Raw Adamstuen",
+                "address": "Oslo Raw Adamstuen, Ullevålsveien 82, Oslo, Norge",
+                "city": "Oslo",
+                "email": "shop4@gmail.com",
+                "phone": "+923238484098",
+                "center": {
+                    "lng": 10.7344495,
+                    "lat": 59.93295449999999
+                  },
+                "lng": 10.4567687989,
+                  "lat": 59.879878989
+                }
+
+
+]

@@ -15,7 +15,9 @@
     "@react-google-maps/api": "^2.20.5",
     "next": "15.1.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-google-maps": "^9.4.5",
+    "recompose": "^0.30.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
